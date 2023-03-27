@@ -1,1 +1,1 @@
-from .classy_xml import ClassyXml
+from .classy_xml import ClassyXml, XmlElement
