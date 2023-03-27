@@ -13,27 +13,27 @@ class ClassyXml:
         """
 
         root = ET.parse(xml_file).getroot()
-        parsed_item_root = self.parse_xml(root, XmlItem())
-        for attr_name in dir(parsed_item_root):
-            attr = getattr(parsed_item_root, attr_name)
-            if isinstance(attr, XmlItem) or (isinstance(attr, list) and isinstance(attr[0], XmlItem)):
+        parsed_element_root = self.parse_xml(root, XmlElement())
+        for attr_name in dir(parsed_element_root):
+            attr = getattr(parsed_element_root, attr_name)
+            if isinstance(attr, XmlElement) or (isinstance(attr, list) and isinstance(attr[0], XmlElement)):
                 setattr(self, attr_name, attr)
 
-    def parse_xml(self, root: ET.Element, item: XmlItem):
+    def parse_xml(self, root: ET.Element, element: XmlElement):
         """Parse the xml file and create class attributes for the elements and
         attributes defined in the xml file.
         """
         for key, value in root.attrib.items():
-            setattr(item, key, value)
+            setattr(element, key, value)
         children = root.findall('*')
         for child in children:
-            child_item = self.parse_xml(child, XmlItem())
-            setattr(item, child.tag, child_item)
-            setattr(child_item, 'text', child.text)
-        return item
+            child_element = self.parse_xml(child, XmlElement())
+            setattr(element, child.tag, child_element)
+            setattr(child_element, 'text', child.text)
+        return element
 
 
-class XmlItem:
+class XmlElement:
     def __init__(self):
         """Helper class for the ClassyXml class
         """
