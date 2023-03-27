@@ -1,0 +1,45 @@
+<test_xml>
+  <basic_element>basic_element_text</basic_element>
+  <multi_element>multi_element_text_0</multi_element>
+  <multi_element>multi_element_text_1</multi_element>
+  <empty_element_with_attributes name="attr_name" value="attr_value" />
+  <empty_multi_element_with_attributes name="attr_0_name" value="attr_0_value" />
+  <empty_multi_element_with_attributes name="attr_1_name" value="attr_1_value" />
+  <basic_element_with_attributes name="attr_name" value="attr_value">basic_element_with_attributes_text</basic_element_with_attributes>
+  <multi_element_with_attributes name="attr_0_name" value="attr_0_value">multi_element_with_attributes_text_0</multi_element_with_attributes>
+  <multi_element_with_attributes name="attr_1_name" value="attr_1_value">multi_element_with_attributes_text_1</multi_element_with_attributes>
+  <basic_nested_element>
+    <basic_element_child>basic_element_child_text</basic_element_child>
+    <multi_element_child>multi_element_child_text_0</multi_element_child>
+    <multi_element_child>multi_element_child_text_1</multi_element_child>
+    <empty_element_with_attributes_child name="child_attr_name" value="child_attr_value" />
+    <empty_multi_element_with_attributes_child name="child_attr_0_name" value="child_attr_0_value" />
+    <empty_multi_element_with_attributes_child name="child_attr_1_name" value="child_attr_1_value" />
+    <basic_element_with_attributes_child name="child_attr_name" value="child_attr_value">basic_element_with_attributes_child_text</basic_element_with_attributes_child>
+    <multi_element_with_attributes_child name="child_attr_0_name" value="child_attr_0_value">multi_element_with_attributes_child_text_0</multi_element_with_attributes_child>
+    <multi_element_with_attributes_child name="child_attr_1_name" value="child_attr_1_value">multi_element_with_attributes_child_text_1</multi_element_with_attributes_child>
+  </basic_nested_element>
+  <multi_nested_element>
+    <basic_element_child>basic_element_child_0_text</basic_element_child>
+    <multi_element_child>multi_element_child_0_text_0</multi_element_child>
+    <multi_element_child>multi_element_child_0_text_1</multi_element_child>
+    <empty_element_with_attributes_child name="child_0_attr_name" value="child_0_attr_value" />
+    <empty_multi_element_with_attributes_child name="child_0_attr_0_name" value="child_0_attr_0_value" />
+    <empty_multi_element_with_attributes_child name="child_0_attr_1_name" value="child_0_attr_1_value" />
+    <basic_element_with_attributes_child name="child_0_attr_name" value="child_0_attr_value">basic_element_with_attributes_child_0_text</basic_element_with_attributes_child>
+    <multi_element_with_attributes_child name="child_0_attr_0_name" value="child_0_attr_0_value">multi_element_with_attributes_child_0_text_0</multi_element_with_attributes_child>
+    <multi_element_with_attributes_child name="child_0_attr_1_name" value="child_0_attr_1_value">multi_element_with_attributes_child_0_text_1</multi_element_with_attributes_child>
+    <unique_element_child>unique_element_child_0_text</unique_element_child>
+  </multi_nested_element>
+  <multi_nested_element>
+    <basic_element_child>basic_element_child_1_text</basic_element_child>
+    <multi_element_child>multi_element_child_1_text_0</multi_element_child>
+    <multi_element_child>multi_element_child_1_text_1</multi_element_child>
+    <empty_element_with_attributes_child name="child_1_attr_name" value="child_1_attr_value" />
+    <empty_multi_element_with_attributes_child name="child_1_attr_0_name" value="child_1_attr_0_value" />
+    <empty_multi_element_with_attributes_child name="child_1_attr_1_name" value="child_1_attr_1_value" />
+    <basic_element_with_attributes_child name="child_1_attr_name" value="child_1_attr_value">basic_element_with_attributes_child_1_text</basic_element_with_attributes_child>
+    <multi_element_with_attributes_child name="child_1_attr_0_name" value="child_1_attr_0_value">multi_element_with_attributes_child_1_text_0</multi_element_with_attributes_child>
+    <multi_element_with_attributes_child name="child_1_attr_1_name" value="child_1_attr_1_value">multi_element_with_attributes_child_1_text_1</multi_element_with_attributes_child>
+  </multi_nested_element>
+</test_xml>
