@@ -9,20 +9,15 @@ if __name__ == '__main__':
         os.remove(countries_mod_xml)
     obj = ClassyXml(countries_xml)
 
-    obj.country = XmlElement()
-    obj.country[-1].name = 'USA'
-    obj.country[-1].rank = XmlElement()
-    obj.country[-1].rank.text = 2
-    obj.country[-1].year = XmlElement()
-    obj.country[-1].year.text = 2012
-    obj.country[-1].gdppc = XmlElement()
-    obj.country[-1].gdppc.text = 12345
-    obj.country[-1].neighbor = XmlElement()
-    obj.country[-1].neighbor[0].name = 'Canada'
-    obj.country[-1].neighbor[0].direction = 'N'
-    obj.country[-1].neighbor = XmlElement()
-    obj.country[-1].neighbor[1].name = 'Mexico'
-    obj.country[-1].neighbor[1].direction = 'S'
+    # Add a USA country element
+    obj.country = XmlElement(attributes={'name': 'USA'})
+    obj.country[-1].rank = XmlElement(text=2)
+    obj.country[-1].year = XmlElement(text=2012)
+    obj.country[-1].gdppc = XmlElement(text=12345)
+    obj.country[-1].neighbor = XmlElement(
+        attributes={'name': 'Canada', 'direction': 'N'})
+    obj.country[-1].neighbor = XmlElement(
+        attributes={'name': 'Mexico', 'direction': 'S'})
 
     obj.save_as(countries_mod_xml)
     print(f'Modified {countries_xml} and saved to {countries_mod_xml}')

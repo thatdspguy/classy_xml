@@ -13,9 +13,7 @@ def classy_xml_test_fixture():
 
 @pytest.fixture
 def classy_xml_empty_fixture():
-    filepath = os.path.split(__file__)[0]
-    test_xml = os.path.join(filepath, 'temp.xml')
-    return ClassyXml(test_xml)
+    return ClassyXml()
 
 
 @pytest.fixture
@@ -27,9 +25,7 @@ def classy_xml_countries_fixture():
 
 @pytest.fixture
 def classy_xml_modify_and_save_fixture():
-    filepath = os.path.split(__file__)[0]
-    test_xml = os.path.join(filepath, 'countries_gen.xml')
-    return ClassyXml(test_xml, 'data')
+    return ClassyXml()
 
 
 def test_basic_element_length(classy_xml_test_fixture):
@@ -558,56 +554,37 @@ def test_save_as(classy_xml_countries_fixture):
     assert countries_text == temp_countries_text
 
 
-def test_modify_and_save_xml(classy_xml_modify_and_save_fixture):
-    fixture = classy_xml_modify_and_save_fixture
+def test_modify_and_save_xml(classy_xml_empty_fixture):
 
-    fixture.country = XmlElement()
-    fixture.country[0].name = 'Liechtenstein'
-    fixture.country[0].rank = XmlElement()
-    fixture.country[0].rank.text = 1
-    fixture.country[0].year = XmlElement()
-    fixture.country[0].year.text = 2008
-    fixture.country[0].gdppc = XmlElement()
-    fixture.country[0].gdppc.text = 141100
-    fixture.country[0].neighbor = XmlElement()
-    fixture.country[0].neighbor[0].name = 'Austria'
-    fixture.country[0].neighbor[0].direction = 'E'
-    fixture.country[0].neighbor = XmlElement()
-    fixture.country[0].neighbor[1].name = 'Switzerland'
-    fixture.country[0].neighbor[1].direction = 'W'
+    classy_xml_empty_fixture.country = XmlElement(
+        attributes={'name': 'Liechtenstein'})
+    classy_xml_empty_fixture.country[0].rank = XmlElement(text=1)
+    classy_xml_empty_fixture.country[0].year = XmlElement(text=2008)
+    classy_xml_empty_fixture.country[0].gdppc = XmlElement(text=141100)
+    classy_xml_empty_fixture.country[0].neighbor = XmlElement(
+        attributes={'name': 'Austria', 'direction': 'E'})
+    classy_xml_empty_fixture.country[0].neighbor = XmlElement(
+        attributes={'name': 'Switzerland', 'direction': 'W'})
 
-    fixture.country = XmlElement()
-    fixture.country[1].name = 'Singapore'
-    fixture.country[1].rank = XmlElement()
-    fixture.country[1].rank.text = 4
-    fixture.country[1].year = XmlElement()
-    fixture.country[1].year.text = 2011
-    fixture.country[1].gdppc = XmlElement()
-    fixture.country[1].gdppc.text = 59900
-    fixture.country[1].neighbor = XmlElement()
-    fixture.country[1].neighbor[0].name = 'Malaysia'
-    fixture.country[1].neighbor[0].direction = 'N'
+    classy_xml_empty_fixture.country = XmlElement()
+    classy_xml_empty_fixture.country[1].name = 'Singapore'
+    classy_xml_empty_fixture.country[1].rank = XmlElement()
+    classy_xml_empty_fixture.country[1].rank.text = 4
+    classy_xml_empty_fixture.country[1].year = XmlElement()
+    classy_xml_empty_fixture.country[1].year.text = 2011
+    classy_xml_empty_fixture.country[1].gdppc = XmlElement()
+    classy_xml_empty_fixture.country[1].gdppc.text = 59900
+    classy_xml_empty_fixture.country[1].neighbor = XmlElement()
+    classy_xml_empty_fixture.country[1].neighbor[0].name = 'Malaysia'
+    classy_xml_empty_fixture.country[1].neighbor[0].direction = 'N'
 
-    fixture.country = XmlElement()
-    fixture.country[2].name = 'Panama'
-    fixture.country[2].rank = XmlElement()
-    fixture.country[2].rank.text = 68
-    fixture.country[2].year = XmlElement()
-    fixture.country[2].year.text = 2011
-    fixture.country[2].gdppc = XmlElement()
-    fixture.country[2].gdppc.text = 13600
-    fixture.country[2].neighbor = XmlElement()
-    fixture.country[2].neighbor[0].name = 'Costa Rica'
-    fixture.country[2].neighbor[0].direction = 'W'
-    fixture.country[2].neighbor = XmlElement()
-    fixture.country[2].neighbor[1].name = 'Colombia'
-    fixture.country[2].neighbor[1].direction = 'E'
+    filepath = os.path.split(__file__)[0]
+    gen_countries_filename = os.path.join(filepath, 'countries_gen.xml')
+    classy_xml_empty_fixture.save_as(gen_countries_filename)
 
-    fixture.save()
-
-    with open(fixture.xml_file) as file:
+    with open(gen_countries_filename) as file:
         countries_gen_text = file.read()
-    os.remove(fixture.xml_file)
+    os.remove(gen_countries_filename)
 
     filepath = os.path.split(__file__)[0]
     countries_filename = os.path.join(filepath, 'countries.xml')

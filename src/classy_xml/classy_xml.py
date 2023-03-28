@@ -5,7 +5,7 @@ from collections import defaultdict
 
 
 class ClassyXml:
-    def __init__(self, xml_file: str, root_xml_element_name:str ='root'):
+    def __init__(self, xml_file: str = None, root_xml_element_name:str ='root'):
         """ClassyXml Class
         An xml file parser that makes the element text and attributes of an
         xml file accessible as ClassyXml class attributes.
@@ -16,10 +16,13 @@ class ClassyXml:
         self._elements = defaultdict(list)
 
         self.xml_file = xml_file
-        if os.path.isfile(xml_file):
-            root = ET.parse(xml_file).getroot()
-            self.root_xml_element_name = root.tag
-            self.parse_xml(root)
+        if xml_file is not None:
+            if os.path.isfile(xml_file):
+                root = ET.parse(xml_file).getroot()
+                self.root_xml_element_name = root.tag
+                self.parse_xml(root)
+            else:
+                raise ValueError(f'XML file {xml_file} does not exist')
         else:
             self.root_xml_element_name = root_xml_element_name
 
@@ -54,11 +57,13 @@ class ClassyXml:
         
         return element
 
-
     def save(self):
+        if self.xml_file is None:
+            raise ValueError('XML file is not defined. Use the save_as(xml_file) method instead')
         self.save_as(self.xml_file)
 
     def save_as(self, xml_file):
+        self.xml_file = xml_file
         with open(xml_file, 'w') as file_handle:
             file_handle.write(f'<{self.root_xml_element_name}>\n')
             for element_name, elements in self._elements.items():
@@ -92,13 +97,21 @@ class ClassyXml:
 
 class XmlElement:
 
-    def __init__(self):
-        """Helper class for the ClassyXml class
+    def __init__(self, text: str = None, attributes: dict = {}):
+        """Helper class with the ClassyXml class
+
+        Args:
+            text (str, optional): xml element text field. Defaults to None
+            attributes (dict, optional): xml element attributes. Defaults to {}.
         """
         self._elements = defaultdict(list)
         self._attributes = {}
-        self._text = None
+        self._text = text
         self._iterated = False
+
+        for name, value in attributes.items():
+            setattr(self, name, value)
+
 
     def __setattr__(self, name, value):
         if isinstance(value, XmlElement):
