@@ -7,17 +7,18 @@ if __name__ == '__main__':
     countries_mod_xml = os.path.join(filepath, 'countries_mod.xml')
     if os.path.isfile(countries_mod_xml):
         os.remove(countries_mod_xml)
-    obj = ClassyXml(countries_xml)
+    classy = ClassyXml(countries_xml)
 
-    # Add a USA country element
-    obj.country = XmlElement(attributes={'name': 'USA'})
-    obj.country[-1].rank = XmlElement(text=2)
-    obj.country[-1].year = XmlElement(text=2012)
-    obj.country[-1].gdppc = XmlElement(text=12345)
-    obj.country[-1].neighbor = XmlElement(
-        attributes={'name': 'Canada', 'direction': 'N'})
-    obj.country[-1].neighbor = XmlElement(
-        attributes={'name': 'Mexico', 'direction': 'S'})
+    # Create a USA country element
+    usa = XmlElement(attributes={'name': 'USA'})
+    usa.rank = XmlElement(text=2)
+    usa.year = XmlElement(text=2012)
+    usa.gdppc = XmlElement(text=12345)
+    usa.neighbor = XmlElement(attributes={'name': 'Canada', 'direction': 'N'})
+    usa.neighbor = XmlElement(attributes={'name': 'Mexico', 'direction': 'S'})
 
-    obj.save_as(countries_mod_xml)
+    # Add the USA country element the ClassyXml countries
+    classy.country = usa
+
+    classy.save_as(countries_mod_xml)
     print(f'Modified {countries_xml} and saved to {countries_mod_xml}')
