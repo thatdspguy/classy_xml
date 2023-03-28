@@ -131,11 +131,11 @@ class XmlElement:
         return self
     
     def __next__(self):
-        if self.iterated:
-            self.iterated = False
+        if self._iterated:
+            self._iterated = False
             raise StopIteration
         else:
-            self.iterated = True
+            self._iterated = True
             return self
     
     def __len__(self):
