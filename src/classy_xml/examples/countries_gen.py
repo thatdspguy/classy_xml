@@ -6,7 +6,7 @@ if __name__ == '__main__':
     countries_xml = os.path.join(filepath, 'countries_gen.xml')
     if os.path.isfile(countries_xml):
         os.remove(countries_xml)
-    classy = ClassyXml()
+    classy = ClassyXml(countries_xml)
 
     # Creating Liechtenstein Element
     # Setting the text and attributes using the XmlElement arguments
@@ -37,5 +37,5 @@ if __name__ == '__main__':
     classy.country = liechtenstein
     classy.country = singapore
 
-    classy.save_as(countries_xml)
+    classy.save()
     print(f'Generated {countries_xml}')

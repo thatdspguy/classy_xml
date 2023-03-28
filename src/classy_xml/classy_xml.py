@@ -16,13 +16,10 @@ class ClassyXml:
         self._elements = defaultdict(list)
 
         self.xml_file = xml_file
-        if xml_file is not None:
-            if os.path.isfile(xml_file):
-                root = ET.parse(xml_file).getroot()
-                self.root_xml_element_name = root.tag
-                self.parse_xml(root)
-            else:
-                raise ValueError(f'XML file {xml_file} does not exist')
+        if xml_file is not None and os.path.isfile(xml_file):
+            root = ET.parse(xml_file).getroot()
+            self.root_xml_element_name = root.tag
+            self.parse_xml(root)
         else:
             self.root_xml_element_name = root_xml_element_name
 
