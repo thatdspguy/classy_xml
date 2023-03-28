@@ -1,125 +1,160 @@
 from __future__ import annotations
+import os
 import xml.etree.ElementTree as ET
+from collections import defaultdict
 
 
 class ClassyXml:
-    def __init__(self, xml_file: str):
+    def __init__(self, xml_file: str, root_xml_element_name:str ='root'):
         """ClassyXml Class
-        An xml file parser that makes the element text and attributes of an 
+        An xml file parser that makes the element text and attributes of an
         xml file accessible as ClassyXml class attributes.
 
         Args:
             xml_file (str): xml file to parse
         """
+        self._elements = defaultdict(list)
 
-        root = ET.parse(xml_file).getroot()
-        self.parsed_element_root = self.parse_xml(root, XmlElement())
-        for attr_name in dir(self.parsed_element_root):
-            attr = getattr(self.parsed_element_root, attr_name)
-            if isinstance(attr, XmlElement) or (isinstance(attr, list) and isinstance(attr[0], XmlElement)):
-                setattr(self, attr_name, attr)
+        self.xml_file = xml_file
+        if os.path.isfile(xml_file):
+            root = ET.parse(xml_file).getroot()
+            self.root_xml_element_name = root.tag
+            self.parse_xml(root)
+        else:
+            self.root_xml_element_name = root_xml_element_name
 
-    def parse_xml(self, root: ET.Element, element: XmlElement):
+    def __setattr__(self, name, value):
+        if isinstance(value, XmlElement):
+            self._elements[name].append(value)
+            super().__setattr__(name, self._elements[name])
+        else:
+            super().__setattr__(name, value)
+
+    def __getattribute__(self, name):
+        attr = super().__getattribute__(name)
+        if isinstance(attr, list) and isinstance(attr[0], XmlElement) and len(attr) == 1:
+            return attr[0]
+        else:
+            return attr    
+
+    def parse_xml(self, root: ET.Element, element: XmlElement = None):
         """Parse the xml file and create class attributes for the elements and
         attributes defined in the xml file.
         """
-        for key, value in root.attrib.items():
-            setattr(element, key, value)
+        for attr_name, attr_value in root.attrib.items():
+            setattr(element, attr_name, attr_value)
         children = root.findall('*')
         for child in children:
             child_element = self.parse_xml(child, XmlElement())
-            setattr(element, child.tag, child_element)
-            setattr(child_element, 'text', child.text)
+            if element is None:
+                setattr(self, child.tag, child_element)
+            else:
+                setattr(element, child.tag, child_element)
+            child_element.text = child.text
+        
         return element
 
-    def add_element(self, name):
-        self.parsed_element_root.add_element(name)
-        setattr(self, name, getattr(self.parsed_element_root, name))
 
-    def remove_element(self, name):
-        self.parsed_element_root.remove_element(name)
-        delattr(self, name)
+    def save(self):
+        self.save_as(self.xml_file)
+
+    def save_as(self, xml_file):
+        with open(xml_file, 'w') as file_handle:
+            file_handle.write(f'<{self.root_xml_element_name}>\n')
+            for element_name, elements in self._elements.items():
+                for element in elements:
+                    self._write_xml(file_handle, element, element_name)
+            file_handle.write(f'</{self.root_xml_element_name}>\n')
+
+    def _write_xml(self, file_handle, element: XmlElement, element_name: str, level=1):
+        file_handle.write(f'{"  "*level}<{element_name}')
+
+        for attribute_name, attribute_value in element._attributes.items():
+            file_handle.write(f' {attribute_name}="{attribute_value}"')
+
+        if len(element._elements) == 0:
+            needs_end_tag = False
+            if element.text:
+                file_handle.write(f'>{element.text}</{element_name}>\n')
+            else:
+                file_handle.write('/>\n')
+        else:
+            needs_end_tag = True
+            file_handle.write('>\n')
+
+        for child_name, child_elements in element._elements.items():
+            for child_element in child_elements:
+                self._write_xml(file_handle, child_element, child_name, level+1)
+
+        if needs_end_tag:
+            file_handle.write(f'{"  "*level}</{element_name}>\n')
 
 
 class XmlElement:
 
-    class_methods = [
-        'add_element',
-        'remove_element',
-        'add_text',
-        'remove_text',
-        'add_attribute',
-        'remove_attribute'
-    ]
-
     def __init__(self):
         """Helper class for the ClassyXml class
         """
-        self._index = 0
-
-    def add_element(self, name):
-        attr = XmlElement()
-        setattr(attr, 'text', None)
-        setattr(self, name, attr)
-
-    def remove_element(self, name):
-        delattr(self, name)
-        delattr(self, f'_{name}')
-
-    def add_text(self, text, overwrite=False):
-        if self.text is None or overwrite:
-            delattr(self, 'text')
-            delattr(self, '_text')
-            setattr(self, 'text', text)
-        else:
-            raise AttributeError(
-                f'This element already has the text {self.text} associated with it. Set the overwrite flag to overwrite the text')
-
-    def remove_text(self):
-        delattr(self, 'text')
-        delattr(self, '_text')
-        setattr(self, 'text', None)
-
-    def add_attribute(self, name, value, overwrite=False):
-        if not hasattr(self, name) or overwrite:
-            setattr(self, name, str(value))
-        else:
-            raise AttributeError(
-                f'The attribute {name} already exists. Set the overwrite flag to overwrite the attribute')
-
-    def remove_attribute(self, name):
-        delattr(self, name)
-        delattr(self, f'_{name}')
-
-    def __iter__(self):
-        return self
-
-    def __next__(self):
-        if self._index == 1:
-            self._index = 0
-            raise StopIteration
-        self._index += 1
-        return self
-
-    def __len__(self):
-        return 1
-
-    def __getattribute__(self, name):
-        if name == 'class_methods' or name in self.class_methods or name[0] == '_':
-            return super().__getattribute__(name)
-        else:
-            hidden_attr = super().__getattribute__(f'_{name}')
-            if len(hidden_attr) == 1:
-                return hidden_attr[0]
-            else:
-                return hidden_attr
+        self._elements = defaultdict(list)
+        self._attributes = {}
+        self._text = None
+        self._iterated = False
 
     def __setattr__(self, name, value):
-        if name in self.class_methods or name[0] == '_':
+        if isinstance(value, XmlElement):
+            self._elements[name].append(value)
+            super().__setattr__(name, self._elements[name])
+        else:
+            if name[0] != '_' and name != 'text':
+                value = str(value)
+                self._attributes[name] = value
             super().__setattr__(name, value)
-            return
-        try:
-            super().__getattribute__(f'_{name}').append(value)
-        except AttributeError:
-            super().__setattr__(f'_{name}', [value])
-            super().__setattr__(name, value)
+
+    def __getattribute__(self, name):
+        attr = super().__getattribute__(name)
+        if isinstance(attr, list) and isinstance(attr[0], XmlElement) and len(attr) == 1:
+            return attr[0]
+        else:
+            return attr
+    
+    def __iter__(self):
+        return self
+    
+    def __next__(self):
+        if self.iterated:
+            self.iterated = False
+            raise StopIteration
+        else:
+            self.iterated = True
+            return self
+    
+    def __len__(self):
+        return 1
+    
+    def __getitem__(self, index: int):
+        if index == 0 or index == -1:
+            return self
+        else:
+            raise ValueError()
+        
+    @property
+    def text(self):
+        return self._text
+
+    @text.setter
+    def text(self, value):
+        if isinstance(value, str): 
+            value = value.replace('\n', '').strip()
+            if value == '':
+                value = None
+        elif value == None:
+            pass
+        else: 
+            value = str(value)
+        self._text = value
+
+    @text.deleter
+    def text(self):
+        self._text = None
+    
+    
